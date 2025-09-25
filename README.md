@@ -1,4 +1,6 @@
 # IAC Portfolio – Jip
+Welkom op mijn Github repo!
+Ik haal dit vak in in mijn reparatiesemester, ik hoop dat ik het een beetje goed doe.
 
 ## Doel
 Hybride lab met geautomatiseerde provisioning (Terraform), config management (Ansible) en containers (Docker).
@@ -19,7 +21,6 @@ Hybride lab met geautomatiseerde provisioning (Terraform), config management (An
 - `ansible/` — inventories, roles, playbooks
 - `docker/` — container setup
 - `scripts/` — hulpscripts (geen secrets)
-- `.github/workflows` — optionele checks
 
 ## Weekoverzicht
 - Week 0/1: omgeving & connectiviteit → bewijs in `evidence/week0` en `evidence/week1`.
