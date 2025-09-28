@@ -1,0 +1,8 @@
+#cloud-config
+write_files:
+  - path: /home/iac/hello.txt
+    permissions: '0644'
+    content: |
+      Hello World
+runcmd:
+  - chown iac:iac /home/iac/hello.txt
