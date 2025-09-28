@@ -1,16 +1,30 @@
-# OS / editor
+# OS / editors
 .DS_Store
 .vscode/
 .idea/
+
 # Terraform
 .terraform/
 *.tfstate
 *.tfstate.backup
 crash.log
+*.tfvars
+*.tfvars.json
+
 # Ansible
 *.retry
+
 # Python
 __pycache__/
 *.pyc
+
 # Docker
 *.log
+
+# Secrets (nooit committen)
+secrets/
+*.pem
+*.key
+.env
+.env.*
+*.txt
