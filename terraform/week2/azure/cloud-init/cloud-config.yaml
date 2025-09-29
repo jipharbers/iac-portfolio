@@ -1,8 +1,14 @@
 #cloud-config
+package_update: false
+package_upgrade: false
+
 write_files:
-  - path: /home/iac/hello.txt
+  - path: /home/chipuser/hello.txt
     permissions: '0644'
     content: |
-      Hello World
+      Hello poging 2. Nu chipuser in plaats van iac.
+
 runcmd:
-  - chown iac:iac /home/iac/hello.txt
+  - printf 'Hello poging 2. Nu chipuser in plaats van iac.\n' > /home/chipuser/hello.txt
+  - chown chipuser:chipuser /home/chipuser/hello.txt
+  - date > /var/tmp/cloud-init-ran.txt

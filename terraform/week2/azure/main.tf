@@ -6,15 +6,20 @@ terraform {
   }
 }
 
-provider "azurerm" { features {} }
+# Belangrijk: nested block op eigen regels
+provider "azurerm" {
+  features {}
+  subscription_id = var.subscription_id
+}
 
 data "azurerm_resource_group" "rg" {
   name = var.resource_group_name
 }
 
+# Gebruik jouw beoogde Azure-net: 10.10.25.0/24
 resource "azurerm_virtual_network" "vnet" {
   name                = "${var.name}-vnet"
-  address_space       = ["10.42.0.0/16"]
+  address_space       = ["10.10.25.0/24"]
   location            = data.azurerm_resource_group.rg.location
   resource_group_name = data.azurerm_resource_group.rg.name
 }
@@ -23,13 +28,14 @@ resource "azurerm_subnet" "subnet" {
   name                 = "${var.name}-subnet"
   resource_group_name  = data.azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = ["10.42.1.0/24"]
+  address_prefixes     = ["10.10.25.0/24"]
 }
 
 resource "azurerm_network_security_group" "nsg" {
   name                = "${var.name}-nsg"
   location            = data.azurerm_resource_group.rg.location
   resource_group_name = data.azurerm_resource_group.rg.name
+
   security_rule {
     name                       = "allow_ssh_in"
     priority                   = 1001
@@ -43,8 +49,9 @@ resource "azurerm_network_security_group" "nsg" {
   }
 }
 
+# We maken 2 VM's: vm1 en vm2, met Public IP
 resource "azurerm_public_ip" "pip" {
-  for_each            = toset(["vm1","vm2"])
+  for_each            = toset(["vm1", "vm2"])
   name                = "${var.name}-${each.key}-pip"
   location            = data.azurerm_resource_group.rg.location
   resource_group_name = data.azurerm_resource_group.rg.name
@@ -57,6 +64,7 @@ resource "azurerm_network_interface" "nic" {
   name                = "${var.name}-${each.key}-nic"
   location            = data.azurerm_resource_group.rg.location
   resource_group_name = data.azurerm_resource_group.rg.name
+
   ip_configuration {
     name                          = "ipcfg"
     subnet_id                     = azurerm_subnet.subnet.id
@@ -77,15 +85,15 @@ locals {
 
 resource "azurerm_linux_virtual_machine" "vm" {
   for_each            = azurerm_network_interface.nic
-  name                = "${var.name}-${each.key}"
+  name                = "${var.name}-${each.key}" # => J2-vm1, J2-vm2
   location            = data.azurerm_resource_group.rg.location
   resource_group_name = data.azurerm_resource_group.rg.name
   size                = "Standard_B1s"
 
-  admin_username = "chipuser"
+  admin_username                  = "chipuser"
   disable_password_authentication = true
 
-  network_interface_ids = [ each.value.id ]
+  network_interface_ids = [each.value.id]
 
   os_disk {
     name                 = "${var.name}-${each.key}-osdisk"
